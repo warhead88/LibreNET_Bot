@@ -54,8 +54,8 @@ class Database:
     async def check_date(self, telegram_id):
         async with self.pool.acquire() as conn:
             async with conn.transaction():
-                sub_date = await conn.execute(f"SELECT subscription_end FROM users WHERE telegram_id = {telegram_id};")
-                if sub_date != 'None':
+                sub_date = await conn.fetchval(f"SELECT subscription_end FROM users WHERE telegram_id = {telegram_id};")
+                if sub_date != None:
                     return (sub_date - datetime.now()).days
 
 async def main():

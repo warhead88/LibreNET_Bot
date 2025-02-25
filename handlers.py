@@ -22,14 +22,18 @@ async def menu(callback: CallbackQuery):
 
 @router.callback_query(F.data == 'mainmenu')
 async def main_menu(callback: CallbackQuery):
+    id = callback.from_user.id
     await db.connect()
     await callback.answer('')
-    if await db.check_sub(callback.from_user.id) == True:
-        status = 'Активна'
+    if await db.check_sub(id) == True:
+        status = '✅Активна'
+        days = str(await db.check_date(id)) + ' дней.' 
     else:
-        status = 'Неактивна'
+        status = '❌Неактивна'
+        days = 'У вас нет подписки :('
     await callback.message.edit_text(f"""Это основное меню управления, здесь вы можете всячески манипулировать с ботом.
-Статус подписки: {status} """, reply_markup=kb.menu_button)
+Статус подписки: {status}
+До конца подписки: {days}""", reply_markup=kb.menu_button)
     await db.disconnect()
 
 @router.callback_query(F.data == 'prices')
