@@ -1,22 +1,21 @@
 import asyncio
-#import logging
 import os
 
 from dotenv import load_dotenv
-from aiogram import Bot, Dispatcher, F
-from aiogram.filters import CommandStart, Command
-from aiogram.types import Message
+from aiogram import Bot, Dispatcher
 
 from handlers import router
-
-load_dotenv()
-
-#logging.basicConfig(level=logging.INFO)
-
-bot = Bot(token=os.getenv("BOT_TOKEN"))
-dp = Dispatcher()
+from database import Database
 
 async def main():
+    load_dotenv()
+    bot = Bot(token=os.getenv("BOT_TOKEN"))
+    dp = Dispatcher()
+
+    db = await Database.create()  # Инициализация базы данных
+
+    dp["db"] = db  # Передаём объект базы данных в контекст aiogram
+
     dp.include_router(router)
     await dp.start_polling(bot)
 
